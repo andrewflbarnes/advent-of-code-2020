@@ -15,8 +15,10 @@ fs.readFile(path.join(__dirname, '/input'), 'utf8', (err, data) => {
 
         console.log(`Line ${i}: letter=${letter} positions=${positions}`)
         
-        count = pass.charAt(positions[0] - 1) === letter ? 1 : 0
-        count += pass.charAt(positions[1] - 1) === letter ? 1 : 0
+        const count = positions.filter(position => {
+            return pass.charAt(position - 1) === letter ? 1 : 0
+            
+        }).length
 
         return count === 1
     })
