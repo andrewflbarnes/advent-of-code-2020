@@ -40,4 +40,4 @@ gcc -o solution2.o solution2.c
 ```
 
 Note: varying levels of debug output can be triggered by having the first
-argument as one of `-v`, `-vv` or `-vvv`.
+argument as one of `-v`, `-vv` or `-vvv` on `solution2.sh`.
