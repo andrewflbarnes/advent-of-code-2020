@@ -12,7 +12,7 @@ Naive solution for first task. Runs as
 ```bash
 ./solution.sh
 # or
-rustc -o solution.o solution.c
+rustc -o solution.o solution.rs
 ./solution.o
 # or
 gcc -o solution.o solution.c
@@ -28,7 +28,7 @@ their product. Generally run as
 # i.e. for task 2
 ./solution2.sh 3 2020
 # or (naive implementation)
-rustc -o solution2.o solution2.c
+rustc -o solution2.o solution2.rs
 ./solution2.o input 3 2020
 ```
 
