@@ -1,5 +1,9 @@
 use std::env;
 use std::fs;
+use std::io::{
+    BufReader,
+    BufRead,
+};
 
 #[derive(Debug)]
 struct Password<'a> {
@@ -32,40 +36,43 @@ impl <'a>Password<'a> {
     }
 }
 
-fn main() {
+fn main() -> Result<(), std::io::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let values = read_file(filename);
-
+    let file = fs::File::open(filename)?;
+    let mut buf = BufReader::new(file);
+    let mut line = String::new();
     let mut valid = 0;
-    for v in values {
-        let password = Password::parse(&v);
-        // println!("CHECK   : {:?}", password);
-        if password.is_valid() {
-            // println!("VALID   : {:?}", password);
-            valid += 1;
-        } else {
-            // println!("INVALID : {:?}", password);
-        }
-    }
-    println!("{} password valid", valid);
-}
 
-fn read_file(filename: &str) -> Vec<String> {
+    loop {
+        match buf.read_line(&mut line) {
+            Ok(bytes_read) => {
+                if bytes_read == 0 {
+                    break;
+                }
 
-    let contents = fs::read_to_string(filename)
-        .expect(&("Unable to read file ".to_owned() + filename));
+                if Password::parse(&line).is_valid() {
+                    valid += 1;
+                }
 
-    let lines = contents.split("\n");
-
-    let mut values: Vec<String> = vec![];
-
-    for line in lines {
-        if !line.is_empty() {
-            values.push(String::from(line));
+                line.clear();
+            }
+            Err(err) => {
+                return Err(err);
+            }
         }
     }
 
-    values
+    // Simpler but less efficient
+    // let valid = fs::read_to_string(filename)
+    //     .expect(&("Unable to read file ".to_owned() + filename))
+    //     .lines()
+    //     .filter(|line| {
+            
+    //     })
+    //     .count();
+    println!("{} passwords valid", valid);
+
+    Ok(())
 }
