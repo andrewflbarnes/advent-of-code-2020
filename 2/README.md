@@ -17,6 +17,9 @@ Read input as an array, filter on those passwords which fulfil the criteria and 
 ```bash
 ./solution.js
 # or
+rustc -o solution.o solution.rs
+./solution.o
+# or
 gcc -o solution.o solution.c
 ./solution.o
 ```
@@ -26,6 +29,9 @@ gcc -o solution.o solution.c
 Read input as an array, filter on those passwords which fulfil the criteria and return the count
 ```bash
 ./solution2.js
+# or
+rustc -o solution2.o solution2.rs
+./solution.o
 # or
 gcc -o solution2.o solution2.c
 ./solution2.o
