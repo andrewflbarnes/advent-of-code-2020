@@ -21,8 +21,13 @@ As task 2 criteria are a superset of task 1 criteria there is a single solution 
 rustc solution.rs
 # Task 1
 ./solution input
+# or
+./solution.js
+
 # Task 2
 ./solution input strict
+# or
+STRICT=1 ./solution.js
 ```
 
 [1]: <https://adventofcode.com/2020/day/4> "Advent of Code day 4 challenge"
