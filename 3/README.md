@@ -25,6 +25,9 @@ This map continuously repeats to the right.
 As task 2 is a superset of task 1 there is a single solution.
 ```bash
 ./solution.js
+# or
+rustc solution.rs
+./solution input
 ```
 
 [1]: <https://adventofcode.com/2020/day/3> "Advent of Code day 3 challenge"
