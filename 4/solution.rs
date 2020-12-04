@@ -112,7 +112,6 @@ impl <'a>Passport {
                 }
             },
             "pid" => {
-                println!("{} {}", v, v.len());
                 if v.len() != 9 || !v.chars().all(char::is_numeric) {
                     return false;
                 }
