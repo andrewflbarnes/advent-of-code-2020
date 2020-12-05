@@ -12,14 +12,8 @@ fs.readFile(path.join(__dirname, '/input'), 'utf8', (err, data) => {
     let possibleSeats = []
 
     for (const line of lines) {
-      const binRow = line
-        .slice(0, 7)
-        .replace(/B/g, '1')
-        .replace(/F/g, '0')
-      const binCol = line
-        .slice(7)
-        .replace(/R/g, '1')
-        .replace(/L/g, '0')
+      const binRow = line.slice(0, 7)
+      const binCol = line.slice(7)
 
       const row = parseBin(binRow)
       const col = parseBin(binCol)
@@ -55,7 +49,8 @@ function parseBin(str) {
   let res = 0
   const strLen = str.length
   for (i = 0; i < strLen; i++) {
-    if (str.charAt((strLen - i - 1)) === '1') {
+    const char = str.charAt(strLen - i - 1)
+    if (char === 'R' || char === 'B') {
       res += 1 << i
     }
   }
