@@ -13,12 +13,14 @@ side are filled
 
 ### Solutions
 
-##### 1 and 2: solution.js
+##### 1 and 2
 
 As task 2 criteria are a superset of task 1 criteria there is a single solution.
 ```bash
-# Task 1
 ./solution.js
+# or
+rustc solution.rs
+./solution input
 ```
 
 [1]: <https://adventofcode.com/2020/day/5> "Advent of Code day 5 challenge"
