@@ -9,16 +9,6 @@ use std::io::{
 fn main() -> Result<(), std::io::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
-    // let strict: bool;
-    // if args.len() > 2 {
-    //     strict = args[2] == "strict";
-    // } else {
-    //     strict = false;
-    // }
-    // match strict {
-    //     true  => println!("Strict processing enabled"),
-    //     false => println!("Strict processing disabled"),
-    // }
 
     let file = fs::File::open(filename)?;
     let mut buf = BufReader::new(file);
@@ -37,6 +27,7 @@ fn main() -> Result<(), std::io::Error> {
                     // EOF
                     group_answer_any += answers_any.len();
                     group_answer_all += answers_all.len();
+                    // println!("Counted: {}\nCounted: {}", answers_any.len(), answers_all.len());
                     break;
                 }
 
@@ -59,6 +50,8 @@ fn main() -> Result<(), std::io::Error> {
                 } else {
                     group_answer_any += answers_any.len();
                     group_answer_all += answers_all.len();
+                    // println!("Counted: {}\nCounted: {}", answers_any.len(), answers_all.len());
+                    // println!("Any: {}\nAll: {}", group_answer_any, group_answer_all);
                     answers_any.clear();
                     answers_all.clear();
                     new_group = true;
@@ -72,8 +65,7 @@ fn main() -> Result<(), std::io::Error> {
         }
     }
 
-    println!("Group answer sum (any yes): {}", group_answer_any);
-    println!("Group answer sum (all yes): {}", group_answer_all);
+    println!("Any: {}\nAll: {}", group_answer_any, group_answer_all);
 
     Ok(())
 }
