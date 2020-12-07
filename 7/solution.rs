@@ -56,7 +56,6 @@ fn main() {
     let filename = &args[1];
 
     let mut bags: HashMap<String, Bag> = HashMap::new();
-    let mut links: HashMap<&str, Vec<&str>> = HashMap::new();
     
     fs::read_to_string(filename)
         .expect(&format!("Could not open file: {}", filename))
@@ -66,8 +65,12 @@ fn main() {
             bags.insert(bag.color.clone(), bag);
         });
 
+    // Create a reference between bags and other bags which contain them
+    let mut links: HashMap<&str, Vec<&str>> = HashMap::new();
+
     let clone = bags.clone();
     let bag_vals: Vec<&Bag> = clone.values().collect();
+
     for bag in &bag_vals {
         links.entry(&bag.color).or_insert(vec![]);
         for child in &bag.contents {
@@ -120,7 +123,7 @@ fn nested_bags(color: &str, bags: &HashMap<String, Bag>, number_bags: i32) -> i3
     count
 }
 
-fn do_nested_bags(color: &str, bags: &HashMap<String, Bag>, number_bags: i32, count: &mut i32, shortcut: &mut HashMap<String, i32>) {
+fn do_nested_bags(color: &str, bags: &HashMap<String, Bag>, number_bags: i32, count: &mut i32, shortcuts: &mut HashMap<String, i32>) {
     let bag = bags.get(color).unwrap();
 
     if bag.contents.len() == 0 {
@@ -128,8 +131,19 @@ fn do_nested_bags(color: &str, bags: &HashMap<String, Bag>, number_bags: i32, co
     }
 
     for child_bag in &bag.contents {
-        // println!("{} {} bag contains {} {} bags")
+        let child_color = &child_bag.0;
+        let child_count = child_bag.1;
+
         *count += number_bags * child_bag.1;
-        do_nested_bags(&child_bag.0, bags, child_bag.1 * number_bags, count, shortcut);
+
+        if let Some(shortcut_count) = shortcuts.get(child_color) {
+            *count += number_bags * child_count * shortcut_count;
+        } else {
+            let pre_count = count.clone();
+            do_nested_bags(child_color, bags, child_count * number_bags, count, shortcuts);
+            let bags_for_color = (*count - pre_count) / (child_count * number_bags);
+            // println!("Bags for {}: {}", child_color, bags_for_color);
+            shortcuts.insert(String::from(child_color), bags_for_color);
+        }
     }
 }
