@@ -1,6 +1,6 @@
 # Advent of Code 2020
 
-See the [site][1]. This repo was kept private during the event.
+See the [site][1].
 
 ### Requirements
 
