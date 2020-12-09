@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::env;
 use std::fs;
 use std::io::{
@@ -17,14 +18,11 @@ fn main() -> Result<(), std::io::Error> {
     let mut buf = BufReader::new(file);
     let mut line = String::new();
     let mut idx = 0;
-    let mut buffer_idx = 0;
     let buffer_size = preamble - 1;
-    let mut val_buffer: Vec<i64> = vec![0; buffer_size];
-    let mut combo_buffer: Vec<Vec<i64>> = vec![vec![]; buffer_size];
-    let mut entries = 0;
+    let mut val_buffer: VecDeque<i64> = VecDeque::with_capacity(buffer_size);
+    let mut combo_buffer: VecDeque<Vec<i64>> = VecDeque::new();
 
     loop {
-        // println!("entries={}, idx={} buffer_idx={} buffer={:?}", entries, idx, buffer_idx, val_buffer);
         line.clear();
 
         match buf.read_line(&mut line) {
@@ -57,14 +55,8 @@ fn main() -> Result<(), std::io::Error> {
                 }
 
                 let mut combos = vec![];
-                for i in 0..entries {
-                    let entry_idx;
-                    if i + 1 > buffer_idx {
-                        entry_idx = buffer_idx + entries - i - 1;
-                    } else {
-                        entry_idx = buffer_idx - i - 1;
-                    }
-                    let combo = this_val + val_buffer[entry_idx];
+                for i in (0..val_buffer.len()).rev() {
+                    let combo = this_val + val_buffer.get(i).unwrap();
                     combos.push(combo);
                 }
 
@@ -72,10 +64,12 @@ fn main() -> Result<(), std::io::Error> {
                     for vals in &mut combo_buffer {
                         vals.pop();
                     }
+                    val_buffer.pop_front();
+                    combo_buffer.pop_front();
                 }
 
-                val_buffer[buffer_idx] = this_val;
-                combo_buffer[buffer_idx] = combos;
+                val_buffer.push_back(this_val);
+                combo_buffer.push_back(combos);
             }
             Err(err) => {
                 return Err(err);
@@ -83,14 +77,6 @@ fn main() -> Result<(), std::io::Error> {
         }
 
         idx += 1;
-        if buffer_idx == buffer_size - 1 {
-            buffer_idx = 0;
-        } else {
-            buffer_idx += 1;
-        }
-        if entries < buffer_size {
-            entries += 1;
-        }
     }
 
     Ok(())
