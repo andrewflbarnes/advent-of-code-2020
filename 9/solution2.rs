@@ -9,9 +9,7 @@ fn main() -> Result<(), std::io::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
     
-    // let target = &args[2].parse::<i64>().unwrap();
-    let target = 217430975;
-    println!("target: {}", target);
+    let target = args[2].parse::<i64>().unwrap();
 
     let file = fs::File::open(filename)?;
     let mut buf = BufReader::new(file);
