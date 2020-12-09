@@ -1,4 +1,4 @@
-# Challenge 2
+# Challenge 3
 
 The challenge can be found [here][1]
 

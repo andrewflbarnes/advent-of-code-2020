@@ -1,4 +1,4 @@
-# Challenge 2
+# Challenge 9
 
 The challenge can be found [here][1]
 
@@ -15,6 +15,14 @@ the min and max values from this set
 ### Solutions
 
 ##### 1
+
+This uses a ring buffer for storing the previous values and the valid combos associated with them. Each
+time a line is read be add a vec to the combo buffer containing all valid combiniations of that value
+and preceding values. We also pop the latest value from each combo buffer each line read to reflect no
+longer valid combos as previous values go "out of scope".
+
+This *could* be more memory efficient for larger inputs of preambles though I suspect tweaking to
+prevent the `vec.slice().to_vec()` would be required to make this truly useful...
 
 ```bash
 rustc solution.rs
