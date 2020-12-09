@@ -37,7 +37,6 @@ fn main() -> Result<(), std::io::Error> {
 
                 // remove newline
                 let this_val = line.trim().parse::<i64>().unwrap();
-                val_buffer[buffer_idx] = this_val;
 
                 if idx > preamble {
                     let mut found = false;
@@ -52,29 +51,37 @@ fn main() -> Result<(), std::io::Error> {
 
                     if !found {
                         println!("{}: Value {} was not composable from previous {} entries:", idx + 1, this_val, preamble);
-                        println!("{:?}", combo_buffer);
+                        // println!("{:?}", val_buffer);
+                        // println!("{:?}", combo_buffer);
                     }
                 }
 
                 let mut combos = vec![];
                 for i in 0..entries {
                     let entry_idx;
-                    if i > buffer_idx {
-                        entry_idx = buffer_idx + entries - i;
+                    if i + 1 > buffer_idx {
+                        entry_idx = buffer_idx + entries - i - 1;
                     } else {
-                        entry_idx = buffer_idx - i;
+                        entry_idx = buffer_idx - i - 1;
                     }
                     let combo = this_val + val_buffer[entry_idx];
                     combos.push(combo);
                 }
 
+                if idx > preamble {
+                    for vals in &mut combo_buffer {
+                        vals.pop();
+                    }
+                }
+
+                val_buffer[buffer_idx] = this_val;
                 combo_buffer[buffer_idx] = combos;
             }
             Err(err) => {
                 return Err(err);
             }
         }
-        
+
         idx += 1;
         if buffer_idx == buffer_size - 1 {
             buffer_idx = 0;
