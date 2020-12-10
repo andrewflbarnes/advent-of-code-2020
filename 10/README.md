@@ -12,14 +12,16 @@ Not included in the input file are
 
 ### Tasks
 
-1. Order the adapaters so they can all be plugged in in a row between the source and the device. Calculate
-the product of the number of 1 jolt increments and 3 jolt increments.
-2. ???
+1. Order the adapters so they can all be plugged in in a row between the source and the device. Calculate
+the product of the number of 1 jolt increments and 3 jolt increments
+2. As adapters accept up to 3 jolts lower how many valid combinations of adapters are there (given that
+not all adapaters which have a 1 jolt increment are required)
 
 ### Solutions
 
-##### 1
+##### 1 and 2
 
+Single solution provided:
 ```bash
 rustc solution.rs
 ./solution input
