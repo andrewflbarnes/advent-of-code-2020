@@ -27,4 +27,11 @@ rustc solution.rs
 ./solution input
 ```
 
+### Tests
+
+```bash
+rustc --crate-name solution_test solution.rs --test
+./solution_test
+```
+
 [1]: <https://adventofcode.com/2020/day/10> "Advent of Code day 10 challenge"

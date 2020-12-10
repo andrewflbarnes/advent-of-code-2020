@@ -18,7 +18,7 @@ clean:
 
 	@echo Removing compiled output from challenge directories
 	@for i in {1..25}; do \
-		for file in "*.out" solution solution2; do \
+		for file in "*.out" solution solution2 solution_test solution2_test; do \
 			rm -fv $$i/$$file; \
 		done; \
 	done;
