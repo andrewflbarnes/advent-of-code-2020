@@ -6,22 +6,14 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let mut rows = 0;
-    let mut cols = 0;
-    
-    let mut data: Vec<Vec<char>> = vec![];
-    
-    fs::read_to_string(filename)
+    let mut data: Vec<Vec<char>> = fs::read_to_string(filename)
         .expect(&format!("Could not open file: {}", filename))
         .lines()
-        .for_each(|line| {
-            data.push(line.chars().collect());
-            rows += 1;
-            cols = line.len();
-        });
-
-    println!("rows={} cols={}", rows, cols);
-    // println!("data={:?}", data);
+        .map(|line| line.chars().collect())
+        .collect();
+    
+    let rows = data.len() as i32;
+    let cols = data[0].len() as i32;
 
     let mut buffer = data.clone();
 
@@ -32,36 +24,32 @@ fn main() {
         // println!("Start next iteration: {}", iterations);
         for i in 0..rows {
             for j in 0..cols {
-                let seat = data[i][j];
+                let ii = i as usize;
+                let jj = j as usize;
+                let seat = data[ii][jj];
                 if seat == '.' {
                     continue;
                 }
 
 
                 let mut adjacent = 0;
-                let is = i.checked_sub(1);
-                let ia = Some(i + 1);
-                let ii = Some(i);
-                let js = j.checked_sub(1);
-                let ja = Some(j + 1);
-                let jj = Some(j);
-                adjacent += check_seat(rows, cols, is, js, &data);
-                adjacent += check_seat(rows, cols, is, jj, &data);
-                adjacent += check_seat(rows, cols, is, ja, &data);
-                adjacent += check_seat(rows, cols, ii, js, &data);
-                adjacent += check_seat(rows, cols, ii, ja, &data);
-                adjacent += check_seat(rows, cols, ia, js, &data);
-                adjacent += check_seat(rows, cols, ia, jj, &data);
-                adjacent += check_seat(rows, cols, ia, ja, &data);
+                for i_offset in -1..=1 {
+                    for j_offset in -1..=1 {
+                        if j_offset == 0 && i_offset == 0 {
+                            continue;
+                        }
+                        adjacent += check_seat(rows, cols, i + i_offset, j + j_offset, &data);
+                    }
+                }
 
                 // print!("({}, {}) {} -> {} -> ", i, j, adjacent, seat);
 
                 if seat == 'L' && adjacent == 0 {
-                    buffer[i][j] = '#';
+                    buffer[ii][jj] = '#';
                 } else if seat == '#' && adjacent >= 4 {
-                    buffer[i][j] = 'L';
+                    buffer[ii][jj] = 'L';
                 } else {
-                    buffer[i][j] = seat;
+                    buffer[ii][jj] = seat;
                 }
 
                 // println!("{}", buffer[i][j]);
@@ -71,8 +59,8 @@ fn main() {
     }
 
     let mut occupied = 0;
-    for i in 0..rows {
-        for j in 0..cols {
+    for i in 0..(rows as usize) {
+        for j in 0..(cols as usize) {
             if data[i][j] == '#' {
                 occupied += 1;
             }
@@ -82,17 +70,10 @@ fn main() {
     println!("Stable state after {} iterations with {} seats occupied", iterations, occupied);
 }
 
-fn check_seat(rows: usize, cols: usize, row: Option<usize>, col: Option<usize>, data: &Vec<Vec<char>>) -> i32 {
-    if row == None || col == None {
-        return 0;
-    }
-
-    let rr = row.unwrap();
-    let cc = col.unwrap();
-
-    if rr >= rows || cc >= cols {
+fn check_seat(rows: i32, cols: i32, row: i32, col: i32, data: &Vec<Vec<char>>) -> i32 {
+    if row < 0 || row >= rows || col < 0 || col >= cols {
         0
-    } else if data[rr][cc] == '#' {
+    } else if data[row as usize][col as usize] == '#' {
         1
     } else {
         0

@@ -6,21 +6,14 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let mut rows = 0i32;
-    let mut cols = 0i32;
-    
-    let mut data: Vec<Vec<char>> = vec![];
-    
-    fs::read_to_string(filename)
+    let mut data: Vec<Vec<char>> = fs::read_to_string(filename)
         .expect(&format!("Could not open file: {}", filename))
         .lines()
-        .for_each(|line| {
-            data.push(line.chars().collect());
-            rows += 1;
-            cols = line.len() as i32;
-        });
-
-    println!("rows={} cols={}", rows, cols);
+        .map(|line| line.chars().collect())
+        .collect();
+    
+    let rows = data.len() as i32;
+    let cols = data[0].len() as i32;
 
     let mut buffer = data.clone();
 
@@ -40,14 +33,14 @@ fn main() {
                 }
 
                 let mut adjacent = 0;
-                adjacent += check_seat(rows, cols, i, -1, j, -1, &data);
-                adjacent += check_seat(rows, cols, i, -1, j, 0, &data);
-                adjacent += check_seat(rows, cols, i, -1, j, 1, &data);
-                adjacent += check_seat(rows, cols, i, 0, j, -1, &data);
-                adjacent += check_seat(rows, cols, i, 0, j, 1, &data);
-                adjacent += check_seat(rows, cols, i, 1, j, -1, &data);
-                adjacent += check_seat(rows, cols, i, 1, j, 0, &data);
-                adjacent += check_seat(rows, cols, i, 1, j, 1, &data);
+                for i_offset in -1..=1 {
+                    for j_offset in -1..=1 {
+                        if j_offset == 0 && i_offset == 0 {
+                            continue;
+                        }
+                        adjacent += check_seat(rows, cols, i, i_offset, j, j_offset, &data);
+                    }
+                }
 
                 // print!("({}, {}) {} -> {} -> ", i, j, adjacent, seat);
 
