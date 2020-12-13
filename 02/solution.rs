@@ -51,23 +51,13 @@ fn main() {
             // println!("INVALID : {:?}", password);
         }
     }
-    println!("{} password valid", valid);
+    println!("{} passwords valid", valid);
 }
 
 fn read_file(filename: &str) -> Vec<String> {
-
-    let contents = fs::read_to_string(filename)
-        .expect(&("Unable to read file ".to_owned() + filename));
-
-    let lines = contents.split("\n");
-
-    let mut values: Vec<String> = vec![];
-
-    for line in lines {
-        if !line.is_empty() {
-            values.push(String::from(line));
-        }
-    }
-
-    values
+    fs::read_to_string(filename)
+        .expect(&("Unable to read file ".to_owned() + filename))
+        .lines()
+        .map(String::from)
+        .collect()
 }

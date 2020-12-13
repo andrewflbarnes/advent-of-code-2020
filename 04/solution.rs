@@ -34,18 +34,8 @@ impl <'a>Passport {
     }
 
     pub fn is_valid(&self, strict: bool) -> bool {
-        for field in FIELDS.into_iter() {
-            // whyyyyy is this required???
-            // error[E0277]: the trait bound `std::string::String: std::borrow::Borrow<&str>` is not satisfied
-            //   --> solution.rs:39:29
-            //   |
-            // 39 |             if !self.fields.contains_key(field) {
-            //   |                             ^^^^^^^^^^^^ the trait `std::borrow::Borrow<&str>` is not implemented for `std::string::String`
-            //   |
-            //   = help: the following implementations were found:
-                        // <std::string::String as std::borrow::Borrow<str>>
-            let f: &str = field;
-            match self.fields.get(f) {
+        for f in FIELDS.into_iter() {
+            match self.fields.get::<str>(f) {
                 None => return false,
                 Some(v) => {
                     if strict {

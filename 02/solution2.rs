@@ -64,14 +64,6 @@ fn main() -> Result<(), std::io::Error> {
         }
     }
 
-    // Simpler but less efficient
-    // let valid = fs::read_to_string(filename)
-    //     .expect(&("Unable to read file ".to_owned() + filename))
-    //     .lines()
-    //     .filter(|line| {
-            
-    //     })
-    //     .count();
     println!("{} passwords valid", valid);
 
     Ok(())

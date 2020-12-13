@@ -22,19 +22,9 @@ fn main() {
 }
 
 fn read_file(filename: &str) -> Vec<i32> {
-
-    println!("Reading {}", filename);
-    let contents = fs::read_to_string(filename)
-        .expect(&("Unable to read file ".to_owned() + filename));
-
-    let lines = contents.split("\n");
-    let mut values: Vec<i32> = vec![];
-
-    for line in lines {
-        if !line.is_empty() {
-            values.push(line.parse::<i32>().unwrap());
-        }
-    }
-
-    values
+    fs::read_to_string(filename)
+        .expect(&("Unable to read file ".to_owned() + filename))
+        .lines()
+        .map(|line| line.parse::<i32>().unwrap())
+        .collect()
 }

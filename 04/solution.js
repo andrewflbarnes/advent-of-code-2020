@@ -6,9 +6,9 @@ const path = require('path')
 const strict = process.env.STRICT == 1 || false
 const debug = process.env.DEBUG == 1 || false
 
-const hair = /^#[0-9a-f]{6}$/.compile()
+const hair = /^#[0-9a-f]{6}$/
 const eyes = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-const pidFormat = /^[0-9]{9}$/.compile()
+const pidFormat = /^[0-9]{9}$/
 const validators = {
   byr(v) {
     const y = parseInt(v)
