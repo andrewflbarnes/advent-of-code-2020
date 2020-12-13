@@ -24,15 +24,13 @@ impl Heading {
             new_heading += 4;
         }
 
-        let result = match new_heading % 4 {
+        match new_heading % 4 {
             0 => Heading::North,
             1 => Heading::East,
             2 => Heading::South,
             3 => Heading::West,
             _ => panic!(format!("Invalid heading {} from initial {} ({:?}) offset {} ({})", new_heading, initial, self, offset, degrees)),
-        };
-
-        result
+        }
     }
 }
 

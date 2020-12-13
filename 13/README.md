@@ -28,8 +28,16 @@ rustc solution.rs
 
 ### Notes
 
+Having a look through the [advent of code subreddit][3] my solution for task 2 appears to be the
+[chinese remainder theorem][4] with [sieving][5]. This is computationally inefficient (exponential time
+complexity) so *in general* less suited for programming than other methods but is fine given the limited data
+for this challenge.
+
+The below write up is maintained for posterity.
+
 Task 2 was a bit of nightmare. A naive solution doesn't really work here because of the sheer amount of numbers
-to check and calculations to perform. i.e. in a naive solution we
+to check and calculations to perform (one person in the [advent of code subreddit][3] mentions their solution
+taking 25 minutes). In a naive solution we
 - start at 0 minutes
 - increments by 19 minutes each time (the first bus which arrives at offset 0)
 - check if each other bus will arrive `n` minutes after this
@@ -74,3 +82,6 @@ i.e. in the form `19n` for some `n`
 
 [1]: <https://adventofcode.com/2020/day/13> "Advent of Code day 13 challenge"
 [2]: <https://en.wikipedia.org/wiki/Modular_arithmetic> "Wikipedia: Modular Arithmetic"
+[3]: <https://www.reddit.com/r/adventofcode/> "Advent of Code subreddit"
+[4]: <https://en.wikipedia.org/wiki/Chinese_remainder_theorem> "Wikipedia: Chinese Remainder Theorem"
+[5]: <https://en.wikipedia.org/wiki/Chinese_remainder_theorem#Search_by_sieving> "Wikipedia: Chinese Remainder Theorem - Sieving"
