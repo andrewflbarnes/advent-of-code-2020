@@ -14,9 +14,8 @@ fn main() {
     let departure = lines[0].parse::<i32>().unwrap();
     let buses: Vec<i32> = lines[1]
         .split(",")
-        .enumerate()
-        .filter(|(i, bus))| bus != &"x")
-        .map(|(i, bus)| (i, bus.parse::<i32>().unwrap()))
+        .filter(|bus| bus != &"x")
+        .map(|bus| bus.parse::<i32>().unwrap())
         .collect();
     
         println!("{} - {:?}", departure, buses);
@@ -27,7 +26,6 @@ fn main() {
             (bus, wait_time)
         })
         .fold((0, 999999999), |acc, val| {
-            println!("{:?} {:?}", acc, val);
             if val.1 < acc.1 {
                 (*val.0, val.1)
             } else {
