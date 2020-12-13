@@ -40,23 +40,24 @@ Given the answer is ~15 digits long we have approx 50 trillion values to check..
 The below assumes knowledge of basic [modular arithmetic][2].
 
 Instead we do the below
-- find the first bus and it's periodicity (how often it runs). Any solution is eactly divisible by this number i,e `19n`
+- find the first bus and its periodicity (how often it runs). Any solution is exactly divisible by this number
+i.e. in the form `19n` for some `n`
 - we need a fast way to calculate `n`
-- for each other bus calculate minimum `m` where `period<first bus> * m<bus> + offset<bus> = 0 (mod period<bus>)`. e.g.
-    - for a first bus with periodicity `3` and three more buses with periodicity `5`, `7` and `11`, offset `1`, `2` and `4` minutes respectively:
-        - the 5-period bus gives `m = 3` (`3m + 1 (mod 5)`)
-        - the 7-period bus gives `m = 4` (`3m + 2 (mod 7)`)
-        - the 11-period bus gives `m = 6` (`3m + 4 = (mod 11)`)
-- Excluding `bus0` we know we have a minimum `n` of `m<bus1>` e.g. from above
-    - `m<bus1>` is `3` and firt bus periodicity is `3`
+- for each other bus calculate minimum `m` where `period<first bus> * m<bus[i]> + offset<bus[i]> = 0 (mod period<bus[i]>)`. e.g.
+    - for a first bus with periodicity `3` and three more buses with periodicity `5`, `7` and `11`, offset `1`,`2` and `4` minutes respectively:
+        - the 5-period bus gives `m = 3` (`3m + 1 = 0 (mod 5)`)
+        - the 7-period bus gives `m = 4` (`3m + 2 = 0 (mod 7)`)
+        - the 11-period bus gives `m = 6` (`3m + 4 = 0 (mod 11)`)
+- Excluding `bus[0]` we know we have a minimum `n` of `m<bus[1]>` e.g. from above
+    - `m<bus[1]>` is `3` and firt bus periodicity is `3`
     - `3 * 3 = 9`
-    - `bus5` will arrive 1 minute after this time (`10` minutes as `10 % 5 == 0`)
-- We now increment `n` (`3`) by `period<bus1>` (`5`) until `n % period<bus2> == m<bus2>` i.e. `n % 7 == 4`
+    - bus `5` will arrive 1 minute after this time (`10` minutes as `10 % 5 == 0`)
+- We now increment `n` (`3`) by `period<bus[1]>` (`5`) until `n % period<bus[2]> == m<bus[2]>` i.e. `n % 7 == 4`
     - Incrementing by `5` ensures that we always have `n = 3 (mod 5)`
 - At the point `n % 7 == 4` (`18`) we fulfil both
     - `n = 3 (mod 5)`
     - `n = 4 (mod 7)`
-- We now increment `n` (`18`) by `period<bus1> * period<bus2>` (`35`) until `n % period<bus3> == m<bus3>` i.e. `n % 7 == 4`
+- We now increment `n` (`18`) by `period<bus[1]> * period<bus[2]>` (`35`) until `n % period<bus[3]> == m<bus[3]>` i.e. `n % 7 == 4`
     - Incrementing by `35` ensures that we always have `n = 3 (mod 5)` and `n = 4 (mod 7)`
 - At the point `n % 7 == 4` (`193`) we fulfil all of
     - `n = 3 (mod 5)`
