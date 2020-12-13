@@ -34,38 +34,41 @@ pub fn process_data(data: &Vec<i32>) -> (i32, i32, i32, u64) {
     let final_device = data.last().unwrap_or(&0) + 3;
     let final_iter = iter::once(&final_device);
 
-    let mut one_peat = 1;
-    let mut longest_one_peat = 0;
-    let mut combinations = 1;
-    let (_, ones, threes) = data.iter()
+    let (
+        _prev,
+        ones,
+        threes,
+        _one_peat,
+        longest_one_peat,
+        combinations
+    ) = data.iter()
         .chain(final_iter)
-        // (last value, count 1 jolt increments, count 3 jolt increments)
-        .fold((&0i32, 0i32, 0i32), |mut acc, val| {
+        .fold((0i32, 0i32, 0i32, 1i32, 0i32, 1u64), |mut acc, val| {
             match val - acc.0 {
                 1 => {
                     acc.1 += 1;
-                    one_peat += 1;
+                    acc.3 += 1;
                 },
                 3 => {
                     acc.2 += 1;
-                    if one_peat > longest_one_peat {
-                        longest_one_peat = one_peat;
+                    if acc.3 > acc.4 {
+                        acc.4 = acc.3;
                     }
-                    match one_peat {
+                    match acc.3 {
                         1 => { /* No additional combinations possible */}
                         2 => { /* No additional combinations possible */}
-                        // Worke the below out with pen and paper after doing a run to calculate longest_one_peat
-                        3 => combinations *= 2,
-                        4 => combinations *= 4,
-                        5 => combinations *= 7,
-                        _ => { /* Error at bottom */},
+                        // Worked the below out with pen and paper after doing a run to calculate longest_one_peat
+                        3 => acc.5 *= 2,
+                        4 => acc.5 *= 4,
+                        5 => acc.5 *= 7,
+                        _ => println!("Unimplemented one jolt repeat: {}", acc.3),
                     }
-                    one_peat = 1;
+                    acc.3 = 1;
                 },
                 _ => println!("Invalid joltage drop: {} {} -> {}", acc.0, val, val - acc.0),
             }
 
-            acc.0 = val;
+            acc.0 = *val;
 
             return acc;
         });
