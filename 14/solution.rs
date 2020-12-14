@@ -3,6 +3,7 @@ use std::fs;
 
 mod lib;
 use lib::{
+    MaskType,
     Operation,
     State,
 };
@@ -17,15 +18,12 @@ fn main() {
         .map(|line| line.parse::<Operation>().unwrap())
         .collect();
 
-    let mut state = State::new();
-    ops.iter()
-        .for_each(|op| state.execute(op));
+    [MaskType::Value, MaskType::Address].iter()
+        .for_each(|mask_type| {
+            let mut state = State::new(*mask_type);
+            ops.iter()
+                .for_each(|op| state.execute(op));
 
-    println!("Sum of memory values {}", state.mem_sum());
-
-    let mut state = State::new();
-    ops.iter()
-        .for_each(|op| state.execute_2(op));
-
-    println!("Sum of memory values {}", state.mem_sum());
+            println!("Sum of memory values with {:?} masking {}", mask_type, state.mem_sum());
+        });
 }

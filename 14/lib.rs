@@ -2,6 +2,12 @@
 use std::str::FromStr;
 use std::collections::HashMap;
 
+#[derive(Clone, Copy, Debug)]
+pub enum MaskType {
+    Address,
+    Value,
+}
+
 #[derive(Debug)]
 pub struct Mask {
     floats: Vec<usize>,
@@ -86,13 +92,15 @@ impl FromStr for Operation {
 pub struct State {
     mem: HashMap<usize, u64>,
     mask: Mask,
+    mask_type: MaskType,
 }
 
 impl State {
-    pub fn new() -> State {
+    pub fn new(mask_type: MaskType) -> State {
         State {
             mem: HashMap::new(),
             mask: Mask::new(),
+            mask_type,
         }
     }
 
@@ -105,25 +113,19 @@ impl State {
                 // println!("Mask updated to\nzeroes: {:#038b}\nones:   {:#038b}", mask.zeroes, mask.ones);
             },
             Operation::MemSet(mem) => {
-                let adjusted_val = mem.val & self.mask.zeroes | self.mask.ones;
-                // println!("Saving {} -> {} at index {}", mem.val, adjusted_val, mem.addr);
-                self.mem.insert(mem.addr, adjusted_val);
-            },
-        }
-    }
-
-    pub fn execute_2(&mut self, op: &Operation) {
-        match op {
-            Operation::MaskUpdate(mask) => {
-                self.mask.zeroes = mask.zeroes;
-                self.mask.ones = mask.ones;
-                self.mask.floats = mask.floats.clone();
-            },
-            Operation::MemSet(mem) => {
-                let init_addr = mem.addr | self.mask.ones as usize;
-                let floats = &mut self.mask.floats.clone();
-                // println!("Initial address {} with floats: {:?}", init_addr, floats);
-                self.write_floats(floats, init_addr, mem.val);
+                match self.mask_type {
+                    MaskType::Value => {
+                        let adjusted_val = mem.val & self.mask.zeroes | self.mask.ones;
+                        // println!("Saving {} -> {} at index {}", mem.val, adjusted_val, mem.addr);
+                        self.mem.insert(mem.addr, adjusted_val);
+                    },
+                    MaskType::Address => {
+                        let init_addr = mem.addr | self.mask.ones as usize;
+                        let floats = &mut self.mask.floats.clone();
+                        // println!("Initial address {} with floats: {:?}", init_addr, floats);
+                        self.write_floats(floats, init_addr, mem.val);
+                    },
+                }
             },
         }
     }

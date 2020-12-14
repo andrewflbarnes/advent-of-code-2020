@@ -29,7 +29,7 @@ The `X` condition for task 2 will result in multiple memory positions being set.
 
 ### Solutions
 
-##### 1
+##### 1 and 2
 
 ```bash
 rustc solution.rs
