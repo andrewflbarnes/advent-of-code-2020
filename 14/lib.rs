@@ -38,7 +38,7 @@ impl FromStr for Mask {
             } else if ch == "0" {
                 mask.zeroes -= 1 << idx;
             } else if ch == "X" {
-                mask.floats.push(len - i - 1);
+                mask.floats.push(idx);
             }
         }
         // println!("Parse mask:\nmm{}\n{:#038b}\n{:#038b}", s, mask.zeroes, mask.ones);
