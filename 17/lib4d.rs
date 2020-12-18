@@ -53,21 +53,7 @@ impl State {
             for y in 1..(self.y_bound - 1) {
                 for z in 1..(self.z_bound - 1) {
                     for w in 1..(self.w_bound - 1) {
-                        let mut activity = 0;
-                        let mut active = 0;
-                        for xoff in (x-1)..=(x+1) {
-                            for yoff in (y-1)..=(y+1) {
-                                for zoff in (z-1)..=(z+1) {
-                                    for woff in (w-1)..=(w+1) {
-                                        if xoff == x && yoff == y && zoff == z && woff == w {
-                                            active = self.domain[xoff][yoff][zoff][woff];
-                                        } else {
-                                            activity += self.domain[xoff][yoff][zoff][woff];
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        let (active, activity) = self.cell_info(x, y, z, w);
 
                         // println!("cell={}-{}-{} active={} activity={}", x, y, z, active, activity);
                         if active == 1 && (activity < 2 || activity > 3) {
@@ -83,6 +69,26 @@ impl State {
         }
 
         self.domain = updated;
+    }
+
+    fn cell_info(&self, x: usize, y: usize, z: usize, w: usize) -> (u8, u8) {
+        let mut active = 0;
+        let mut activity = 0;
+        for xoff in (x-1)..=(x+1) {
+            for yoff in (y-1)..=(y+1) {
+                for zoff in (z-1)..=(z+1) {
+                    for woff in (w-1)..=(w+1) {
+                        if xoff == x && yoff == y && zoff == z && woff == w {
+                            active = self.domain[xoff][yoff][zoff][woff];
+                        } else {
+                            activity += self.domain[xoff][yoff][zoff][woff];
+                        }
+                    }
+                }
+            }
+        }
+
+        (active, activity)
     }
 
     pub fn count_active(&self) -> u64 {
@@ -104,8 +110,6 @@ impl State {
 
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Use `self.number` to refer to each positional data point.
-        // for z in 7..8 {
         for w in 0..self.w_bound {
             for z in 0..self.z_bound {
                 println!("Layer z={} w={}", z, w);
