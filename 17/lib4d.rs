@@ -1,8 +1,6 @@
-use std::env;
-use std::fs;
 use std::fmt;
 
-struct State {
+pub struct State {
     domain: Vec<Vec<Vec<Vec<u8>>>>,
     x_bound: usize,
     y_bound: usize,
@@ -11,7 +9,7 @@ struct State {
 }
 
 impl State {
-    fn new(init_state: Vec<String>, bound: usize) -> State {
+    pub fn new(init_state: Vec<String>, bound: usize) -> State {
 
         let extends = (bound + 1) * 2;
         let x_init = init_state[0].len();
@@ -24,7 +22,7 @@ impl State {
     
         let mut domain: Vec<Vec<Vec<Vec<u8>>>> = vec![vec![vec![vec![0; w_bound]; z_bound]; y_bound]; x_bound];
     
-        println!("Bounds: x={}, y={}, z={} w={}", x_bound, y_bound, z_bound, w_bound);
+        // println!("Bounds: x={}, y={}, z={} w={}", x_bound, y_bound, z_bound, w_bound);
     
         for y in 0..init_state.len() {
             let line = &init_state[y];
@@ -49,7 +47,7 @@ impl State {
         }
     }
 
-    fn cycle(&mut self) {
+    pub fn cycle(&mut self) {
         let mut updated: Vec<Vec<Vec<Vec<u8>>>> = vec![vec![vec![vec![0; self.w_bound]; self.z_bound]; self.y_bound]; self.x_bound];
         for x in 1..(self.x_bound - 1) {
             for y in 1..(self.y_bound - 1) {
@@ -87,7 +85,7 @@ impl State {
         self.domain = updated;
     }
 
-    fn count_active(&self) -> u64 {
+    pub fn count_active(&self) -> u64 {
         let mut count = 0;
 
         for x in 1..(self.x_bound - 1) {
@@ -127,30 +125,4 @@ impl fmt::Display for State {
 
         Ok(())
     }
-}
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-    let cycles = args[2].parse::<usize>().unwrap();
-    // let cycles = 6;
-
-    let input: Vec<String> = fs::read_to_string(filename)
-        .expect(&format!("Could not open file: {}", filename))
-        .lines()
-        .map(String::from)
-        .collect();
-
-    // let mut state = State::new(vec![String::from(".#."), String::from("..#"), String::from("###")], cycles);
-    let mut state = State::new(input, cycles);
-
-    // println!("NO CYCLE\n{}", state);
-    for _ in 0..cycles {
-        state.cycle();
-        // println!("NEW CYCLE {}\n{}", i, state);
-    }
-
-    // println!("{}", state);
-    println!("Active after {} cycles: {}", cycles, state.count_active());
-
 }
