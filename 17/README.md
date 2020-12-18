@@ -24,7 +24,7 @@ remains inactive
 
 ```bash
 rustc solution.rs
-./solution input
+./solution input 6
 ```
 
 [1]: <https://adventofcode.com/2020/day/17> "Advent of Code day 17 challenge"
