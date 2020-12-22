@@ -94,8 +94,8 @@ impl Tile {
             BorderSide::Left => &self.borders[3],
             _ => panic!("NONE not allowed"),
         };
-        println!("Test {}", border);
-        println!("{:?}", other.borders);
+        // println!("Test {}", border);
+        // println!("{:?}", other.borders);
         for j in 0..other.borders.len() {
             let other_border_side = match j {
                 0 | 4 => BorderSide::Top,
@@ -106,9 +106,9 @@ impl Tile {
             };
             let other_border = &other.borders[j];
             if border == other_border {
-                println!("Border match");
-                println!("{} => {} {:?}", self.id, border, border_side);
-                println!("{} => {} {:?}", other.id, other_border, other_border_side);
+                // println!("Border match");
+                // println!("{} => {} {:?}", self.id, border, border_side);
+                // println!("{} => {} {:?}", other.id, other_border, other_border_side);
                 return (true, other_border_side, j < 4);
             }
         }
@@ -116,7 +116,7 @@ impl Tile {
     }
 
     fn transform(&mut self, t: Transform) {
-        println!("Transform {:?} on {} from", t, self.id);
+        // println!("Transform {:?} on {} from", t, self.id);
         // for l in self.image.iter() {
         //     println!("{}", l);
         // }
@@ -232,9 +232,9 @@ fn find_corners(tiles: &Vec<Tile>) -> Vec<u16> {
         }
     }
 
-    for (k, v) in matches.iter() {
-        println!("tile {} matched {} times", k , v);
-    }
+    // for (k, v) in matches.iter() {
+    //     println!("tile {} matched {} times", k , v);
+    // }
 
     matches.iter().filter(|(_, count)| **count == 2).map(|(id, _)| *id).collect::<Vec<u16>>()
 }
@@ -268,8 +268,6 @@ fn build_image(size: u8, tiles: &mut Vec<Tile>, start_corner: u16) -> Vec<Tile> 
         }
     } else if matched_sides.contains(&BorderSide::Left) {
         tile.transform(Transform::Rot270);
-    } else {
-        println!("perfect match");
     }
     tile.calculate_borders();
     tile_path.push(tile);
@@ -284,10 +282,10 @@ fn build_image(size: u8, tiles: &mut Vec<Tile>, start_corner: u16) -> Vec<Tile> 
             side = BorderSide::Bottom;
             tile = &tile_path[tile_path.len() - size as usize];
         }
-        println!("Path len {} with most recent {} - testing side {:?} on loop {}", tile_path.len(), tile.id, side, tile_path.len());
+        // println!("Path len {} with most recent {} - testing side {:?} on loop {}", tile_path.len(), tile.id, side, tile_path.len());
         idx = tiles.iter().position(|t| tile.adjacent_to_side(side, t).0).unwrap();
         let mut next = tiles.remove(idx);
-        println!("Match prev tile {} to {} at index {}", tile.id, next.id, idx);
+        // println!("Match prev tile {} to {} at index {}", tile.id, next.id, idx);
         let (adj, to_side, flip) = tile.adjacent_to_side(side, &next);
         match (side, to_side) {
             (BorderSide::Right, BorderSide::Top) => next.transform(Transform::Rot270),
@@ -346,11 +344,106 @@ fn main() {
     let corners = find_corners(&tiles);
     println!("Found {} corners {:?} with product {}", corners.len(), corners, corners.iter().map(|id| *id as u64).product::<u64>());
 
-    let path = build_image(12, &mut tiles, corners[0]);
+    let size = 12;
+    let path = build_image(size, &mut tiles, corners[0]);
 
-    for i in 0..12 {
-        for j in 0..12 {
-            println!("{}", path[(i * 12) + j]);
+    let mut full = Tile {
+        id: 0,
+        image: vec![],
+        borders: vec![],
+    };
+    let image_end = path[0].image.len() - 1;
+    let line_end = path[0].image[0].len() - 1;
+    for i in 0..size {
+        for j in 1..image_end {
+            let mut line = String::new();
+            for k in 0..size {
+                let tid = (i * size + k) as usize;
+                // print!("{}", &path[tid].image[j as usize][1..line_end]);
+                line.push_str(&path[tid].image[j as usize][1..line_end]);
+            }
+            // println!("");
+            full.add_image_line(&line);
         }
     }
+
+
+    let snake = vec![
+        "                  # ",
+        "#    ##    ##    ###",
+        " #  #  #  #  #  #   ",
+    ];
+    let snake_density = snake.iter()
+        .fold(0, |mut acc, line| {
+            acc += line.chars()
+                .filter(|c| *c == '#')
+                .count();
+
+            acc
+        });
+    let mut water_roughness = full.image.iter()
+        .fold(0, |mut acc, line| {
+            acc += line.chars()
+                .filter(|c| *c == '#')
+                .count();
+
+            acc
+        });
+
+    let mut count = 0;
+    for _ in 0..2 {
+        for _ in 0..4 {
+            // println!("{}", full);
+            count += find_snake(&full, &snake);
+            full.transform(Transform::Rot90);
+        }
+        full.transform(Transform::FlipVert);
+    }
+
+    println!("Found {} snakes, water roughness {}", count, water_roughness - (snake_density * count));
+}
+
+fn find_snake(full: &Tile, snake: &Vec<&str>) -> usize {
+    let snake_bits = snake.iter()
+        .fold(vec![], |mut acc, line| {
+            let bits = line.chars()
+                .enumerate()
+                .filter(|(_, c)| c == &'#')
+                .map(|(i, _)| i)
+                .collect::<Vec<usize>>();
+
+            acc.push(bits);
+            acc     
+        });
+
+    let snake_len = snake[0].len();
+    let snake_height = snake.len();
+    let full_width = full.image[0].len();
+    let full_height = full.image.len();
+
+    let mut count = 0; 
+
+    for i in 0..(full_height - 1 - snake_height) {
+        for j in 0 ..(full_width - 1 - snake_len) {
+            let mut found = true;
+            // println!("New check {}, {}", j, i);
+            'snake: for k in 0..snake_height {
+                let segment = &full.image[i + k][j..(j + snake_len)];
+                for l in snake_bits[k].iter() {
+                    let ll = *l;
+                    if &segment[ll..(ll+1)] != "#" {
+                        found = false;
+                        // println!("Failed at {} {} {} {}\n{} {}", j, i, k, l, segment, &segment[ll..(ll+1)]);
+                        break 'snake;
+                    }
+                }
+            }
+            if found {
+                count += 1;
+                // println!("Found at {}, {}", j, i);
+            }
+        }
+    }
+
+    count
 }
