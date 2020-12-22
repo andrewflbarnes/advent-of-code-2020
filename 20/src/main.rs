@@ -196,13 +196,13 @@ enum Transform {
 
 impl fmt::Display for Tile {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{}", self.id);
+        writeln!(f, "{}", self.id)?;
         for line in self.image.iter() {
-            writeln!(f, "{}", line);
+            writeln!(f, "{}", line)?;
         }
-        writeln!(f, "Borders:");
+        writeln!(f, "Borders:")?;
         for line in self.borders.iter() {
-            writeln!(f, "{}", line);
+            writeln!(f, "{}", line)?;
         }
         Ok(())
     }
@@ -286,7 +286,7 @@ fn build_image(size: u8, tiles: &mut Vec<Tile>, start_corner: u16) -> Vec<Tile> 
         idx = tiles.iter().position(|t| tile.adjacent_to_side(side, t).0).unwrap();
         let mut next = tiles.remove(idx);
         // println!("Match prev tile {} to {} at index {}", tile.id, next.id, idx);
-        let (adj, to_side, flip) = tile.adjacent_to_side(side, &next);
+        let (_, to_side, flip) = tile.adjacent_to_side(side, &next);
         match (side, to_side) {
             (BorderSide::Right, BorderSide::Top) => next.transform(Transform::Rot270),
             (BorderSide::Right, BorderSide::Right) => next.transform(Transform::Rot180),
@@ -381,7 +381,7 @@ fn main() {
 
             acc
         });
-    let mut water_roughness = full.image.iter()
+    let water_roughness = full.image.iter()
         .fold(0, |mut acc, line| {
             acc += line.chars()
                 .filter(|c| *c == '#')
