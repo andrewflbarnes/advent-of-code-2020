@@ -82,44 +82,35 @@ fn recurse_game(mut p1_deck: VecDeque<u8>, mut p2_deck: VecDeque<u8>) -> (u8, Ve
     while p1_deck.len() > 0 && p2_deck.len() > 0 {
         let p1_check = p1_deck.clone();
         let p2_check = p2_deck.clone();
-        if checks.contains(&(p1_check.clone(), p2_check.clone())) {
+        if !checks.insert((p1_check, p2_check)) {
             return (1, p1_deck);
         }
-
-        checks.insert((p1_check, p2_check));
 
         let p1_card = &p1_deck.pop_front().unwrap();
         let p2_card = &p2_deck.pop_front().unwrap();
 
         if (*p1_card as usize) > p1_deck.len() || (*p2_card as usize) > p2_deck.len() {
             if p2_card > p1_card {
-                p2_deck.push_back(*p2_card);
-                p2_deck.push_back(*p1_card);
+                p2_deck.extend(&[*p2_card, *p1_card]);
             } else {
-                p1_deck.push_back(*p1_card);
-                p1_deck.push_back(*p2_card);
+                p1_deck.extend(&[*p1_card, *p2_card]);
             }
         } else {
-            let p1_deck_r = p1_deck.clone().iter().take(*p1_card as usize).map(|v| *v).collect();
-            let p2_deck_r = p2_deck.clone().iter().take(*p2_card as usize).map(|v| *v).collect();
+            let p1_deck_r = p1_deck.iter().copied().take(*p1_card as usize).collect();
+            let p2_deck_r = p2_deck.iter().copied().take(*p2_card as usize).collect();
             // println!("Recurse game with:");
             // println!("Player 1 ({}): {:?} => {:?}", p1_card, p1_deck, p1_deck_r);
             // println!("Player 2 ({}): {:?} => {:?}", p2_card, p2_deck, p2_deck_r);
-            match recurse_game(
-                p1_deck_r,
-                p2_deck_r) {
+            match recurse_game(p1_deck_r, p2_deck_r) {
                 (1, _) => {
-                    p1_deck.push_back(*p1_card);
-                    p1_deck.push_back(*p2_card);
+                    p1_deck.extend(&[*p1_card, *p2_card]);
                 },
                 (2, _) => {
-                    p2_deck.push_back(*p2_card);
-                    p2_deck.push_back(*p1_card);
+                    p2_deck.extend(&[*p2_card, *p1_card]);
                 },
                 _ => panic!("... on the streets of London..."),
             }
         }
-
     }
 
     if p1_deck.len() > 0 {
