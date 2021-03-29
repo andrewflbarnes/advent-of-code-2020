@@ -60,10 +60,6 @@ fn main() {
 
     println!("Player {} won with score {}", winner, score);
 
-
-
-
-
     let p1_deck = p1_deck_start.clone();
     let p2_deck = p2_deck_start.clone();
     let (winner, win_deck) = recurse_game(p1_deck, p2_deck);

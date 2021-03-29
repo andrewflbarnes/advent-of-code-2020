@@ -69,18 +69,6 @@ fn main() {
                 }
             });
     }
-    
-    println!("{:?}", allergen_ingrs);
-    let mut allergens_ordered = allergen_ingrs.iter()
-    .map(|(_, v)| String::from(v))
-    .collect::<Vec<String>>();
-    allergens_ordered.sort();
-    allergens_ordered.iter().for_each(|a| {
-        print!("{},", allergen_ingrs.iter().filter(|(_, v)| v == &a).map(|(k, _)| k).next().unwrap());
-    });
-    println!("");
-
-    
 
     let mut non_allergens = ingredients.clone();
     non_allergens.retain(|i| !allergen_ingrs.contains_key(i));
@@ -94,4 +82,17 @@ fn main() {
         });
 
     println!("Occurrences of non-allergens: {}", count);
+
+    print!("Dangerous ingredient list: ");
+    let mut allergens_ordered = allergen_ingrs.iter()
+        .map(|(_, v)| String::from(v))
+        .collect::<Vec<String>>();
+    allergens_ordered.sort();
+
+    let dangerous_ingredients = allergens_ordered.iter()
+        .map(|a| allergen_ingrs.iter().filter(|(_, v)| v == &a).map(|(k, _)| k).next().unwrap())
+        .map(String::from)
+        .collect::<Vec<String>>();
+
+    println!("{}", dangerous_ingredients.join(","));
 }

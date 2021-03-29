@@ -11,7 +11,7 @@ fn main() {
         .lines()
         .map(String::from)
         .collect::<Vec<String>>();
-    
+
     let mut black_tiles: HashSet<(i32, i32)> = HashSet::new();
     instrs.iter().for_each(|i| {
         let mut instr = String::from("");

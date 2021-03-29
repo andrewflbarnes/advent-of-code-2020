@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 
 const MODULO: u64 = 20201227;
+const HANDSHAKE_SN: u64 = 7;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,7 +14,7 @@ fn main() {
         .map(|l| l.parse::<u64>().unwrap())
         .collect::<Vec<u64>>();
     
-    let sn = 7;
+    let sn = HANDSHAKE_SN;
     for (i, &pubkey) in pubkeys.iter().enumerate() {
         let iter = get_loop_size(sn, pubkey, MODULO);
 
