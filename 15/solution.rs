@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn main() {
     // println!("{}", calc(vec![1, 3, 2], 2020)); // 1
     // println!("{}", calc(vec![2, 1, 3], 2020)); // 10
@@ -18,7 +16,6 @@ fn main() {
     println!("{}", calc(&starting_numbers, final_idx));
 
     // task 2
-    println!("This one takes a while...");
     let final_idx = 30000000;
     println!("Starting numbers:\n{:?}", &starting_numbers);
     println!("Value at index {}:", final_idx);
@@ -27,27 +24,27 @@ fn main() {
 
 fn calc(starting: &Vec<usize>, final_idx: usize) -> usize {
     let mut idx = 0;
-    let mut track: HashMap<usize, usize> = HashMap::new();
     let mut last = 0;
+    let mut track: Vec<i32> = vec![-1; final_idx];
 
     for val in starting {
-        track.insert(*val, idx);
+        track[*val as usize] = idx as i32;
         
         last = *val;
         idx += 1;
     }
     
-    track.remove(&last);
+    track[last] = -1;
     
     while idx < final_idx {
-        
         let current;
-        if let Some(last_idx) = track.get(&last) {
-            current = idx - 1 - last_idx;
-        } else {
+        let last_idx = track[last];
+        if last_idx == -1 {
             current = 0;
+        } else {
+            current = idx - 1 - last_idx as usize;
         }
-        track.insert(last, idx - 1);
+        track[last] = (idx - 1) as i32;
         last = current;
 
         idx += 1;
