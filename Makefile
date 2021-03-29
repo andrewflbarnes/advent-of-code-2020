@@ -17,7 +17,10 @@ clean:
 	rm -rf target
 
 	@echo Removing compiled output from challenge directories
-	@for i in {1..25}; do \
+	@for i in 0{1..9} {10..25}; do \
+		if [ -f $$i/Cargo.lock ]; then \
+			rm -rf $$i/target; \
+		fi; \
 		for file in "*.out" solution solution2 solution_test solution2_test; do \
 			rm -fv $$i/$$file; \
 		done; \
